@@ -1,0 +1,29 @@
+***ANDROID HTTP ACCESS INTRO***
+
+IS THERE A NETWORK CONNECTION?
+-Before making any network connection, your Android app needs to check if there is a Network Connection
+-Requires this permission in the AndroidManifest.xml
+    .android.permission.ACCESS_NETWORK_STATE -> lets your device check for network connection
+
+OTHER PERMISSION NEEDED?
+-Must have INTERNET permission
+    .android.permission.INTERNET
+
+HTTP Access
+-Use Java's HttpURLConnection -- Supported by Google/Android
+-Use Apache HttpClient -- Larger but not supported
+
+
+***HTTP URL CONNECTION***
+
+USING the HttpURLConnection
+-Simple Java HTTP class
+-The HttpURLConnection and URL classes work hand in hand. Both are part of the "java.net" library.
+    .URL: Creates the URL to which you would like to connect
+    .HttpURLConnection: represents the connection
+-Uses TCP sockets and the standard "java.io" stream classes. This means the I/O calls are blocking
+calls and should not be called in the main UI thread.
+-We have to make this call in a worker thread and communicate back to the main UI thread using handlers,
+and AsyncTask
+-Also, connections as any I/O operation might involve exceptions which should be handled (try/catch)
+
