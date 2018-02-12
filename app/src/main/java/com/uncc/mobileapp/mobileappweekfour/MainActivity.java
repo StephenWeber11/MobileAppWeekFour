@@ -2,6 +2,9 @@ package com.uncc.mobileapp.mobileappweekfour;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -10,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -33,22 +37,23 @@ public class MainActivity extends AppCompatActivity implements GetTweetsAsyncTas
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if(isConnected()){
-//                    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
-//                    //new GetDataAsync().execute("http://api.theappsdr.com/simple.php");
+                if(isConnected()){
+                    Toast.makeText(MainActivity.this, "Connected",Toast.LENGTH_SHORT).show();
+                    //new GetDataAsync().execute("http://api.theappsdr.com/simple.php");
 //                    RequestParams requestParams = new RequestParams();
 //                    requestParams.addParameter("name","Bob Smith")
 //                            .addParameter("age","24")
 //                            .addParameter("email","test@test.com")
 //                            .addParameter("password","sakjl233k");
-//
-//                    //new GetDataParamsUsingGetAsync(requestParams).execute("http://api.theappsdr.com/params.php");
-//                    new GetDataParamsUsingPostAsync(requestParams).execute("http://api.theappsdr.com/params.php");
-//                } else {
-//                    Toast.makeText(MainActivity.this, "Not Connected", Toast.LENGTH_SHORT).show();
-//                }
 
-                new GetTweetsAsyncTask(MainActivity.this).execute("");
+                    //new GetDataParamsUsingGetAsync(requestParams).execute("http://api.theappsdr.com/params.php");
+                    //new GetDataParamsUsingPostAsync(requestParams).execute("http://api.theappsdr.com/params.php");
+                    new GetImageAsync((ImageView) findViewById(R.id.android_image)).execute("https://developer.android.com/_static/images/android/touchicon-180.png");
+                } else {
+                    Toast.makeText(MainActivity.this, "Not Connected", Toast.LENGTH_SHORT).show();
+                }
+
+                //new GetTweetsAsyncTask(MainActivity.this).execute("");
 
             }
         });
@@ -315,6 +320,49 @@ public class MainActivity extends AppCompatActivity implements GetTweetsAsyncTas
                 Log.d("Demo", result);
             } else {
                 Log.d("Demo", "NO RESULT!");
+            }
+        }
+    }
+
+    private class GetImageAsync extends AsyncTask<String, Void, Bitmap>{
+        ImageView imageView;
+        public GetImageAsync(ImageView imageView){
+            this.imageView = imageView;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            StringBuilder sb = new StringBuilder();
+            HttpURLConnection connection = null;
+            Bitmap image = null;
+
+            try {
+                URL url = new URL(params[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+
+                if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    image = BitmapFactory.decodeStream(connection.getInputStream());
+                    return image;
+                }
+
+            } catch(MalformedURLException e){
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if(connection != null){
+                    connection.disconnect();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if(bitmap != null && imageView != null){
+                imageView.setImageBitmap(bitmap);
             }
         }
     }
